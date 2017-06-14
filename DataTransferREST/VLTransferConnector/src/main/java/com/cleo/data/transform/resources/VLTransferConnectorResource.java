@@ -16,70 +16,81 @@ import java.util.ArrayList;
 @Path("/getData")
 public class VLTransferConnectorResource {
 
-    private final String jdbcDriverStr = "com.mysql.jdbc.Driver";
-    private final String jdbcURL = "jdbc:mysql://localhost:3306/cleo";
+  private final String jdbcDriverStr;
+  private final String jdbcURL;
+  private final String user;
+  private final String password;
 
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
 
-    @GET
-    @Path("/VLT")
-    public Response readData() throws Exception {
-      try {
-        Class.forName(jdbcDriverStr);
-        connection = DriverManager.getConnection(jdbcURL, "root", "root");
-        statement = connection.createStatement();
-        resultSet = statement.executeQuery("select * from VLTransfers;");
-        ArrayList<VLTransfersPOJO> vlTransferTable = getResultSet(this.resultSet);
-        return Response.ok().entity(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(vlTransferTable)).build();
-      }finally{
-        close();
-      }
-    }
+  private Connection connection;
+  private Statement statement;
+  private ResultSet resultSet;
 
-    private ArrayList<VLTransfersPOJO> getResultSet(ResultSet resultSet) throws Exception {
-      ArrayList<VLTransfersPOJO> vlTransferTable = new ArrayList<VLTransfersPOJO>();
-      while(resultSet.next()){
-        VLTransfersPOJO vlTransfersPOJO = new VLTransfersPOJO();
-        vlTransfersPOJO.setTransferId(resultSet.getString(1));
-        vlTransfersPOJO.setVLSerial(resultSet.getString(2));
-        vlTransfersPOJO.setExternalId(resultSet.getString(3));
-        vlTransfersPOJO.setMessageId(resultSet.getString(4));
-        vlTransfersPOJO.setHost(resultSet.getString(5));
-        vlTransfersPOJO.setMailbox(resultSet.getString(6));
-        vlTransfersPOJO.setUsername(resultSet.getString(7));
-        vlTransfersPOJO.setAction(resultSet.getString(8));
-        vlTransfersPOJO.setTransport(resultSet.getString(9));
-        vlTransfersPOJO.setStartDt(resultSet.getString(10));
-        vlTransfersPOJO.setEndDt(resultSet.getString(11));
-        vlTransfersPOJO.setDirection(resultSet.getString(12));
-        vlTransfersPOJO.setIsReceipt(resultSet.getString(13));
-        vlTransfersPOJO.setStatus(resultSet.getString(14));
-        vlTransfersPOJO.setOriginalName(resultSet.getString(15));
-        vlTransfersPOJO.setOriginalPath(resultSet.getString(16));
-        vlTransfersPOJO.setOriginalFileDt(resultSet.getString(17));
-        vlTransfersPOJO.setFileSize(resultSet.getInt(18));
-        vlTransfersPOJO.setTransferTime(resultSet.getFloat(19));
-        vlTransfersPOJO.setTransferBytes(resultSet.getInt(20));
-        vlTransfersPOJO.setCrc(resultSet.getString(21));
-        vlTransfersPOJO.setResultText(resultSet.getString(22));
-        vlTransfersPOJO.setFileHeader(resultSet.getString(23));
-        vlTransfersPOJO.setFolder(resultSet.getString(24));
-        vlTransfersPOJO.setMailboxId(resultSet.getString(25));
-        vlTransfersPOJO.setCopyPath(resultSet.getString(26));
-        vlTransfersPOJO.setRunType(resultSet.getString(27));
-        vlTransferTable.add(vlTransfersPOJO);
-      }
-      return vlTransferTable;
-    }
+  public VLTransferConnectorResource(String jdbcDriverStr, String jdbcURL, String user, String password) {
+    this.jdbcDriverStr = jdbcDriverStr;
+    this.jdbcURL = jdbcURL;
+    this.user = user;
+    this.password = password;
+  }
 
-    private void close(){
-      try {
-        if(resultSet!=null) resultSet.close();
-        if(statement!=null) statement.close();
-        if(connection!=null) connection.close();
-      } catch(Exception e){}
+  @GET
+  @Path("/VLT")
+  public Response readData() throws Exception {
+    try {
+      Class.forName(jdbcDriverStr);
+      connection = DriverManager.getConnection(jdbcURL, user, password);
+      statement = connection.createStatement();
+      resultSet = statement.executeQuery("select * from VLTransfers;");
+      ArrayList<VLTransfersPOJO> vlTransferTable = getResultSet(this.resultSet);
+      return Response.ok().entity(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(vlTransferTable)).build();
+    } finally {
+      close();
     }
   }
+
+  private ArrayList<VLTransfersPOJO> getResultSet(ResultSet resultSet) throws Exception {
+    ArrayList<VLTransfersPOJO> vlTransferTable = new ArrayList<VLTransfersPOJO>();
+    while (resultSet.next()) {
+      VLTransfersPOJO vlTransfersPOJO = new VLTransfersPOJO();
+      vlTransfersPOJO.setTransferId(resultSet.getString(1));
+      vlTransfersPOJO.setVLSerial(resultSet.getString(2));
+      vlTransfersPOJO.setExternalId(resultSet.getString(3));
+      vlTransfersPOJO.setMessageId(resultSet.getString(4));
+      vlTransfersPOJO.setHost(resultSet.getString(5));
+      vlTransfersPOJO.setMailbox(resultSet.getString(6));
+      vlTransfersPOJO.setUsername(resultSet.getString(7));
+      vlTransfersPOJO.setAction(resultSet.getString(8));
+      vlTransfersPOJO.setTransport(resultSet.getString(9));
+      vlTransfersPOJO.setStartDt(resultSet.getString(10));
+      vlTransfersPOJO.setEndDt(resultSet.getString(11));
+      vlTransfersPOJO.setDirection(resultSet.getString(12));
+      vlTransfersPOJO.setIsReceipt(resultSet.getString(13));
+      vlTransfersPOJO.setStatus(resultSet.getString(14));
+      vlTransfersPOJO.setOriginalName(resultSet.getString(15));
+      vlTransfersPOJO.setOriginalPath(resultSet.getString(16));
+      vlTransfersPOJO.setOriginalFileDt(resultSet.getString(17));
+      vlTransfersPOJO.setFileSize(resultSet.getInt(18));
+      vlTransfersPOJO.setTransferTime(resultSet.getFloat(19));
+      vlTransfersPOJO.setTransferBytes(resultSet.getInt(20));
+      vlTransfersPOJO.setCrc(resultSet.getString(21));
+      vlTransfersPOJO.setResultText(resultSet.getString(22));
+      vlTransfersPOJO.setFileHeader(resultSet.getString(23));
+      vlTransfersPOJO.setFolder(resultSet.getString(24));
+      vlTransfersPOJO.setMailboxId(resultSet.getString(25));
+      vlTransfersPOJO.setCopyPath(resultSet.getString(26));
+      vlTransfersPOJO.setRunType(resultSet.getString(27));
+      vlTransferTable.add(vlTransfersPOJO);
+    }
+    return vlTransferTable;
+  }
+
+  private void close() {
+    try {
+      if (resultSet != null) resultSet.close();
+      if (statement != null) statement.close();
+      if (connection != null) connection.close();
+    } catch (Exception e) {
+    }
+  }
+}
 
