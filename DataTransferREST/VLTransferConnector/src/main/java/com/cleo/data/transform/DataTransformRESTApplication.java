@@ -26,7 +26,7 @@ public class DataTransformRESTApplication extends Application<DataTransformRESTC
     @Override
     public void run(final DataTransformRESTConfiguration configuration,
                     final Environment environment) {
-        environment.jersey().register(new VLTransferConnectorResource());
+        environment.jersey().register(new VLTransferConnectorResource(configuration.getDriverClass(), configuration.getUrl(), configuration.getUser(), configuration.getPassword()));
     }
 
 }
