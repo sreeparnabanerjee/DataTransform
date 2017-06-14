@@ -46,9 +46,9 @@
             <version>5.1.6</version>
         </dependency>
         <dependency>
-            <groupId>uk.co.deloittedigital.dropwizard</groupId>
-            <artifactId>dropwizard-hikaricp</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-declarative-linking</artifactId>
+            <version>2.25.1</version>
         </dependency>
     </dependencies>
 

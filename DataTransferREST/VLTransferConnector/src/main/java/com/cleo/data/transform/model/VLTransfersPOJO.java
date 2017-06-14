@@ -1,5 +1,9 @@
 package com.cleo.data.transform.model;
 
+import com.cleo.data.transform.resources.VLTransferConnectorResource;
+import org.glassfish.jersey.linking.InjectLink;
+import org.glassfish.jersey.server.Uri;
+
 /**
  * Created by sreeparna on 31/05/17.
  */

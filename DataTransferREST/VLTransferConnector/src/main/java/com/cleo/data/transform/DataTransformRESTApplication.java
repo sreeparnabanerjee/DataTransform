@@ -5,7 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import uk.co.deloittedigital.dropwizard.hikari.HikariBundle;
+import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 
 public class DataTransformRESTApplication extends Application<DataTransformRESTConfiguration> {
 
@@ -27,6 +27,9 @@ public class DataTransformRESTApplication extends Application<DataTransformRESTC
     public void run(final DataTransformRESTConfiguration configuration,
                     final Environment environment) {
         environment.jersey().register(new VLTransferConnectorResource(configuration.getDriverClass(), configuration.getUrl(), configuration.getUser(), configuration.getPassword()));
+      environment.jersey().getResourceConfig()
+              .packages(getClass().getPackage().getName())
+              .register(DeclarativeLinkingFeature.class);
     }
 
 }

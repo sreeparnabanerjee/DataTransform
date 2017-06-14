@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,21 +36,23 @@ public class VLTransferConnectorResource {
 
   @GET
   @Path("/VLT")
-  public Response readData() throws Exception {
+  @Produces("application/json")
+  public VLTransferTable readData() throws Exception {
     try {
       Class.forName(jdbcDriverStr);
       connection = DriverManager.getConnection(jdbcURL, user, password);
       statement = connection.createStatement();
       resultSet = statement.executeQuery("select * from VLTransfers;");
-      ArrayList<VLTransfersPOJO> vlTransferTable = getResultSet(this.resultSet);
-      return Response.ok().entity(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(vlTransferTable)).build();
+      //ArrayList<VLTransfersPOJO> vlTransferTable = getResultSet(this.resultSet);
+      //return Response.ok().entity(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsBytes(getResultSet(this.resultSet))).build();
+      return getResultSet(this.resultSet);
     } finally {
       close();
     }
   }
 
-  private ArrayList<VLTransfersPOJO> getResultSet(ResultSet resultSet) throws Exception {
-    ArrayList<VLTransfersPOJO> vlTransferTable = new ArrayList<VLTransfersPOJO>();
+  private VLTransferTable getResultSet(ResultSet resultSet) throws Exception {
+    VLTransferTable vlTransferTable = new VLTransferTable();
     while (resultSet.next()) {
       VLTransfersPOJO vlTransfersPOJO = new VLTransfersPOJO();
       vlTransfersPOJO.setTransferId(resultSet.getString(1));
@@ -79,7 +82,7 @@ public class VLTransferConnectorResource {
       vlTransfersPOJO.setMailboxId(resultSet.getString(25));
       vlTransfersPOJO.setCopyPath(resultSet.getString(26));
       vlTransfersPOJO.setRunType(resultSet.getString(27));
-      vlTransferTable.add(vlTransfersPOJO);
+      vlTransferTable.getVlTransfersPOJOS().add(vlTransfersPOJO);
     }
     return vlTransferTable;
   }
